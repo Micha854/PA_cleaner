@@ -5,7 +5,7 @@ this is a cleaner specially developed for pokealarm. but it is also suitable for
 A TIME field is read from the message and must be in the format:
 
 ```
-00:00:00 between 23:59:59
+BETRWEEN 00:00:00 AND 23:59:59
 ```
 
 if this format is not available or if the message is not deleted, it will be deleted after one hour to be on the safe side (only messages with a recognizable TIME field are deleted)
