@@ -56,6 +56,7 @@ else:
         title[chatid] = None
 
     last_update = 0
+    deleted = 0
     
     while 1 == 1:
         while True:
@@ -222,7 +223,7 @@ else:
                                         print(' delete location ' + tabs[:0] + ' message(' + str(location_messageid) + ') from "' + str(location_title) + '"')
                                     except:
                                         print(' cannot be delete location ' + tabs[:0] + ' message(' + str(location_messageid) + ') from "' + str(location_title) + '", skip...')
-                            print('\n')
+                            deleted +=1
 
                 icon = message
                 message = location
@@ -232,7 +233,10 @@ else:
 
             ### result output
             if not fetch[chatid] == 0:
-                print(' Fetching ' + str(fetch[chatid]) + ' Messages from "' + str(title[chatid]) + '"')
+                if deleted > 0:
+                    print('')
+                print(' >>> Fetching ' + str(fetch[chatid]) + ' Messages from "' + str(title[chatid]) + '"')
                 fetch[chatid] = 0
+                deleted = 0
 
         time.sleep(config.sleeptime)
