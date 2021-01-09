@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 __author__ = "Micha854"
 __copyright__ = "Copyright 2020, Micha854"
-__version__ = "0.0.68"
+__version__ = "0.0.69"
 __status__ = "beta"
 
 # generic/built-in and other libs
@@ -14,7 +14,7 @@ import re
 import datetime
 import config
 
-# function to add to JSON
+# function add to JSON
 def write_json(feeds):
     with open(chatid + '.json', mode='w', encoding='utf8') as data:
         json.dump(feeds, data, ensure_ascii=False, indent=4)
@@ -44,7 +44,7 @@ else:
     fetch = {}
     title = {}
     
-    ### readout response.json
+    ### readout all json files of given chatids
     for chatid in config.chatid:
         if os.path.isfile(chatid + ".json"):
             with open(chatid + ".json") as feedsjson:
@@ -55,17 +55,15 @@ else:
         fetch[chatid] = 0
         title[chatid] = None
 
-    ### fetch all updates and save to json
     last_update = 0
     
     while 1 == 1:
         while True:
-
             try:
                 ### load response from getUpdates
                 response = bot.getUpdates(offset=offset, allowed_updates=['channel_post', 'message'])
 
-                ### load getUpdates data to response.json file
+                ### load getUpdates data to json file of chatid
                 for message in response:
                     try:
                         if 'channel_post' in message:
@@ -108,11 +106,18 @@ else:
             f.close()
 
         for chatid in config.chatid:
+            # add two dummy entries if file is empty
             try:
-                icon = feeds[chatid][0]
-                message = feeds[chatid][1]
+                feeds[chatid][0]
             except:
-                print(" ... wait for messages to create new response for chatid " + str(chatid) + ", your bot have permission?")
+                feeds[chatid].append({"update_id": None,"message": {"message_id": None,"chat": {"id": chatid,"username": None},"date": None,"text": "FIRST_DUMMY"}})
+                try:
+                    feeds[chatid][1]
+                except:
+                    feeds[chatid].append({"update_id": None,"message": {"message_id": None,"chat": {"id": chatid,"username": None},"date": None,"text": "SECOND_DUMMY"}})
+            
+            icon = feeds[chatid][0]
+            message = feeds[chatid][1]
 
             ### go through all messages
             for location in feeds[chatid][2:]:
@@ -184,7 +189,6 @@ else:
                     diff = None
 
                 
-                #for chat in (chatid):
                 if not diff == None:
                     old_diff = int(time.time()) - message_date
                     # message is outdated and can be delete
@@ -223,7 +227,7 @@ else:
                 icon = message
                 message = location
 
-            ### save response.json
+            ### save json file of given chatid
             write_json(feeds[chatid])
 
             ### result output
