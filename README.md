@@ -21,3 +21,8 @@ if another format is to be supported, a PR can be made
 
 ## Start
 `python3 clean.py config.ini`
+
+## Option
+if you want not fetch new messages use the option -nofetch
+
+`python3 clean.py config.ini -nofetch`

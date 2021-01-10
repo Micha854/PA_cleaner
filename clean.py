@@ -19,6 +19,18 @@ def write_json(feeds):
     with open(chatid + '.json', mode='w', encoding='utf8') as data:
         json.dump(feeds, data, ensure_ascii=False, indent=4)
 
+### option no fetching
+try:
+    if sys.argv[2] == '-nofetch':
+        fetching = False
+    else:
+        fetching = None
+except:
+    fetching = True
+
+if fetching == None:
+    sys.exit(' no correct option, aborted\n\n availeble option:\n\n  -nofetch     [no fetching new messages]\n')
+    
 ### no config specified
 if len(sys.argv) <= 1:
     print("Es wurde keine Config geladen...")
@@ -59,45 +71,48 @@ else:
     deleted = 0
     
     while 1 == 1:
-        while True:
-            try:
-                ### load response from getUpdates
-                response = bot.getUpdates(offset=offset, allowed_updates=['channel_post', 'message'])
+        if fetching == True:
+            while True:
+                try:
+                    ### load response from getUpdates
+                    response = bot.getUpdates(offset=offset, allowed_updates=['channel_post', 'message'])
 
-                ### load getUpdates data to json file of chatid
-                for message in response:
-                    try:
-                        if 'channel_post' in message:
-                            id    = message['channel_post']['chat']['id']
-                            titl = message['channel_post']['chat']['title']
-                        elif 'message' in message:
-                            id    = message['message']['chat']['id']
-                            titl = message['message']['chat']['username']
-                    except:
-                        id = None
-                        title = None
+                    ### load getUpdates data to json file of chatid
+                    for message in response:
+                        try:
+                            if 'channel_post' in message:
+                                id    = message['channel_post']['chat']['id']
+                                titl = message['channel_post']['chat']['title']
+                            elif 'message' in message:
+                                id    = message['message']['chat']['id']
+                                titl = message['message']['chat']['username']
+                        except:
+                            id = None
+                            title = None
 
-                    if not id == None:
-                        if title[str(id)] == None:
-                            title[str(id)] = titl
+                        if not id == None:
+                            if title[str(id)] == None:
+                                title[str(id)] = titl
 
-                    for chatid in config.chatid:
-                        if not message['update_id'] in feeds[chatid] and str(id) == chatid:
-                            feeds[chatid].append(message)
-                            if message['update_id'] > last_update:
-                                last_update = message['update_id']
-                            fetch[chatid] += 1
+                        for chatid in config.chatid:
+                            if not message['update_id'] in feeds[chatid] and str(id) == chatid:
+                                feeds[chatid].append(message)
+                                if message['update_id'] > last_update:
+                                    last_update = message['update_id']
+                                fetch[chatid] += 1
 
-                offset = last_update + 1
+                    offset = last_update + 1
 
-                if len(response) < 100:
-                    break
+                    if len(response) < 100:
+                        break
 
-                else:
-                    print(" ...fetching " + str(fetch[chatid]) + " messages")
-            except:
-                print(" cannot fetch new data, try again in " + str(config.sleeptime) + " seconds...")
-                time.sleep(config.sleeptime)
+                    else:
+                        print(" ...fetching " + str(fetch[chatid]) + " messages")
+                except:
+                    print(" cannot fetch new data, try again in " + str(config.sleeptime) + " seconds...")
+                    time.sleep(config.sleeptime)
+        else:
+            print('---------- no fetching new messages ----------')
 
 
         ### save next update_id
@@ -206,14 +221,14 @@ else:
                                         feeds[chatid].remove(icon)
                                         print(' delete icon ' + tabs[:4] + ' message(' + str(icon_messageid) + ') from "' + str(icon_title) + '"')
                                     except:
-                                        print(' cannot be delete icon ' + tabs[:4] + ' message(' + str(icon_messageid) + ') from "' + str(icon_title) + '", skip...')
+                                        print(' !!! cannot be delete icon ' + tabs[:4] + ' message(' + str(icon_messageid) + ') from "' + str(icon_title) + '", skip...')
                             # delete central message with despawn time
                             try:
                                 bot.deleteMessage((message_chatid, message_messageid))
                                 feeds[chatid].remove(message)
                                 print(' delete main ' + tabs[:4] + ' message(' + str(message_messageid) + ') from "' + str(message_title) + '"')
                             except:
-                                print(' cannot be delete main ' + tabs[:4] + ' message(' + str(message_messageid) + ') from "' + str(message_title) + '", skip...')
+                                print(' !!! cannot be delete main ' + tabs[:4] + ' message(' + str(message_messageid) + ') from "' + str(message_title) + '", skip...')
                             # delete forward message (map)
                             if config.delete_location:
                                 if not location_is == None:
@@ -222,7 +237,7 @@ else:
                                         feeds[chatid].remove(location)
                                         print(' delete location ' + tabs[:0] + ' message(' + str(location_messageid) + ') from "' + str(location_title) + '"')
                                     except:
-                                        print(' cannot be delete location ' + tabs[:0] + ' message(' + str(location_messageid) + ') from "' + str(location_title) + '", skip...')
+                                        print(' !!! cannot be delete location ' + tabs[:0] + ' message(' + str(location_messageid) + ') from "' + str(location_title) + '", skip...')
                             deleted +=1
 
                 icon = message
