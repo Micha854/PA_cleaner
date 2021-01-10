@@ -20,9 +20,9 @@ messages with a different TIME format are not deleted, e.g. 00:00 is not deleted
 if another format is to be supported, a PR can be made
 
 ## Start
-`python3 clean.py config.ini`
+`python3 clean.py`
 
 ## Option
 if you want not fetch new messages use the option -nofetch
 
-`python3 clean.py config.ini -nofetch`
+`python3 clean.py -nofetch`
