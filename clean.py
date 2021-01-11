@@ -214,6 +214,10 @@ while 1 == 1:
                                     bot.deleteMessage((icon_chatid, icon_messageid))
                                     feeds[chatid].remove(icon)
                                     print(' delete icon ' + tabs[:4] + ' message(' + str(icon_messageid) + ') from "' + str(icon_title) + '"')
+                                except telepot.exception.TelegramError as e:
+                                    if e.error_code == 400:
+                                        feeds[chatid].remove(icon)
+                                        print(' *** icon ' + tabs[:4] + ' message(' + str(icon_messageid) + ') does not exist and will be removed from the json file')
                                 except:
                                     print(' !!! cannot be delete icon ' + tabs[:4] + ' message(' + str(icon_messageid) + ') from "' + str(icon_title) + '", skip...')
                         # delete central message with despawn time
@@ -221,6 +225,12 @@ while 1 == 1:
                             bot.deleteMessage((message_chatid, message_messageid))
                             feeds[chatid].remove(message)
                             print(' delete main ' + tabs[:4] + ' message(' + str(message_messageid) + ') from "' + str(message_title) + '"')
+                        except telepot.exception.TelegramError as e:
+                            if e.error_code == 400:
+                                feeds[chatid].remove(message)
+                                print(' *** main ' + tabs[:4] + ' message(' + str(message_messageid) + ') does not exist and will be removed from the json file')
+                            if e.error_code == 429:
+                                print(' Too Many Requests...')
                         except:
                             print(' !!! cannot be delete main ' + tabs[:4] + ' message(' + str(message_messageid) + ') from "' + str(message_title) + '", skip...')
                         # delete forward message (map)
@@ -230,6 +240,10 @@ while 1 == 1:
                                     bot.deleteMessage((location_chatid, location_messageid))
                                     feeds[chatid].remove(location)
                                     print(' delete location ' + tabs[:0] + ' message(' + str(location_messageid) + ') from "' + str(location_title) + '"')
+                                except telepot.exception.TelegramError as e:
+                                    if e.error_code == 400:
+                                        feeds[chatid].remove(location)
+                                        print(' *** location ' + tabs[:0] + ' message(' + str(location_messageid) + ') does not exist and will be removed from the json file')
                                 except:
                                     print(' !!! cannot be delete location ' + tabs[:0] + ' message(' + str(location_messageid) + ') from "' + str(location_title) + '", skip...')
                         deleted +=1
