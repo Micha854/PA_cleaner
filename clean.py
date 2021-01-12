@@ -84,7 +84,7 @@ while 1 == 1:
                         id = None
                         title = None
 
-                    if not id == None:
+                    if not id == None and id in config.chatid:
                         if title[str(id)] == None:
                             title[str(id)] = titl
 
@@ -102,8 +102,9 @@ while 1 == 1:
 
                 else:
                     print(" ...fetching " + str(fetch[chatid]) + " messages")
-            except:
+            except Exception as e:
                 print(" cannot fetch new data, try again in " + str(config.sleeptime) + " seconds...")
+                print(" error: " + str(e))
                 time.sleep(config.sleeptime)
     else:
         print('---------- no fetching new messages ----------')
