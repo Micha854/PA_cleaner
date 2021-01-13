@@ -82,18 +82,20 @@ while 1 == 1:
                             titl = message['message']['chat']['username']
                     except:
                         id = None
-                        title = None
+                        titl = None
 
                     if not id == None and id in config.chatid:
                         if title[str(id)] == None:
                             title[str(id)] = titl
 
                     for chatid in config.chatid:
+                        del feeds[chatid][-1]
                         if not message['update_id'] in feeds[chatid] and str(id) == chatid:
                             feeds[chatid].append(message)
-                            if message['update_id'] > last_update:
-                                last_update = message['update_id']
-                            fetch[chatid] += 1
+                        if message['update_id'] > last_update:
+                            last_update = message['update_id']
+                        fetch[chatid] += 1
+                        feeds[chatid].append({"update_id": None,"message": {"message_id": None,"chat": {"id": int(chatid),"username": None},"date": None,"text": "LAST_DUMMY"}})
 
                 offset = last_update + 1
 
@@ -121,11 +123,12 @@ while 1 == 1:
         try:
             feeds[chatid][0]
         except:
-            feeds[chatid].append({"update_id": None,"message": {"message_id": None,"chat": {"id": chatid,"username": None},"date": None,"text": "FIRST_DUMMY"}})
+            feeds[chatid].append({"update_id": None,"message": {"message_id": None,"chat": {"id": int(chatid),"username": None},"date": None,"text": "FIRST_DUMMY"}})
             try:
                 feeds[chatid][1]
             except:
-                feeds[chatid].append({"update_id": None,"message": {"message_id": None,"chat": {"id": chatid,"username": None},"date": None,"text": "SECOND_DUMMY"}})
+                feeds[chatid].append({"update_id": None,"message": {"message_id": None,"chat": {"id": int(chatid),"username": None},"date": None,"text": "SECOND_DUMMY"}})
+                feeds[chatid].append({"update_id": None,"message": {"message_id": None,"chat": {"id": int(chatid),"username": None},"date": None,"text": "LAST_DUMMY"}})
         
         icon = feeds[chatid][0]
         message = feeds[chatid][1]
