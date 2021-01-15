@@ -84,17 +84,19 @@ while 1 == 1:
                         id = None
                         titl = None
 
-                    if not id == None and id in config.chatid:
-                        if title[str(id)] == None:
-                            title[str(id)] = titl
-
                     for chatid in config.chatid:
+                        if not titl == None:
+                            if title[chatid] == None:
+                                title[chatid] = titl
+
                         del feeds[chatid][-1]
+
                         if not message['update_id'] in feeds[chatid] and str(id) == chatid:
                             feeds[chatid].append(message)
+                            fetch[chatid] += 1
                         if message['update_id'] > last_update:
                             last_update = message['update_id']
-                        fetch[chatid] += 1
+
                         feeds[chatid].append({"update_id": None,"message": {"message_id": None,"chat": {"id": int(chatid),"username": None},"date": None,"text": "LAST_DUMMY"}})
 
                 offset = last_update + 1
